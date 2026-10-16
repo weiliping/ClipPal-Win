@@ -1,0 +1,19 @@
+# 构建产物（中间目录，可随时删，会自动重建）
+bin/
+obj/
+
+# 发布 / 打包产物
+publish/
+publish-*/
+*.zip
+*.7z
+
+# IDE / 工具
+.vs/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+
+# macOS
+.DS_Store

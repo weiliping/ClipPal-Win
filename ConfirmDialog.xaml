@@ -1,0 +1,17 @@
+<Window x:Class="ClipPal.ConfirmDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="400" SizeToContent="Height"
+        WindowStyle="ToolWindow" ResizeMode="NoResize" ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource PanelBackgroundBrush}"
+        Foreground="{DynamicResource PanelTextBrush}">
+    <StackPanel Margin="20">
+        <TextBlock x:Name="MessageText" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,14"/>
+        <CheckBox x:Name="DontAskBox" Margin="0,0,0,18"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="CancelButton" Padding="16,5" Margin="0,0,8,0" IsCancel="True"/>
+            <Button x:Name="OkButton" Padding="16,5" IsDefault="True"/>
+        </StackPanel>
+    </StackPanel>
+</Window>
