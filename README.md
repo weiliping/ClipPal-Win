@@ -1,0 +1,1 @@
+# ClipPal-Win
