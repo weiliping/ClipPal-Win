@@ -93,12 +93,20 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
+            <!-- 提示文字和清空按钮分两列：文字占满剩余宽度并省略，按钮固定靠右，避免重叠 -->
             <Grid Grid.Row="1" Margin="10,4,8,8">
-                <TextBlock x:Name="FooterHint" FontSize="11"
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" x:Name="FooterHint" FontSize="11"
                            Foreground="{DynamicResource PanelSubtleBrush}"
-                           VerticalAlignment="Center"/>
-                <Button x:Name="TrashButton" Content="🗑" FontSize="13"
-                        HorizontalAlignment="Right" Padding="4,0" BorderThickness="0"
+                           VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"
+                           Margin="0,0,8,0"/>
+                <Button Grid.Column="1" x:Name="TrashButton" Content="🗑" FontSize="13"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Padding="4,0" BorderThickness="0"
                         Background="Transparent" Foreground="{DynamicResource PanelSubtleBrush}"
                         Cursor="Hand" Click="TrashButton_Click"/>
             </Grid>
