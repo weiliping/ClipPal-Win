@@ -18,3 +18,5 @@ publish-*/
 # macOS
 .DS_Store
 installer/*.zip
+installer/*.exe
+installer/Output/
