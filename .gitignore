@@ -20,3 +20,4 @@ publish-*/
 installer/*.zip
 installer/*.exe
 installer/Output/
+ClipPal-sc-folder.zip
