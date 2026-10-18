@@ -25,7 +25,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 
 [Languages]
-Name: "zh"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+; 只用 Inno Setup 自带语言，避免依赖未随安装包分发的 .isl 文件
 Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]

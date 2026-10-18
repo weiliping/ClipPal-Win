@@ -11,19 +11,24 @@ echo.
 
 cd /d "%~dp0.."
 
-rem ---------- 1. 检查 .NET SDK ----------
-where dotnet >nul 2>nul
-if errorlevel 1 (
+rem ---------- 1. 检查 .NET SDK（注意：只装运行时时也会有 dotnet.exe，必须看 --list-sdks） ----------
+set "SDKVER="
+for /f "delims=" %%i in ('dotnet --list-sdks 2^>nul') do set "SDKVER=%%i"
+if not defined SDKVER (
     echo [1/3] 未检测到 .NET SDK，正在安装 .NET 8 SDK ...
     winget install --id Microsoft.DotNet.SDK.8 --accept-source-agreements --accept-package-agreements
     if errorlevel 1 (
         echo.
-        echo 自动安装失败，请手动安装后重试：https://dotnet.microsoft.com/download/dotnet/8.0
+        echo 安装失败。请手动安装后重试：https://dotnet.microsoft.com/download/dotnet/8.0
+        echo 装完请关掉这个窗口，重新双击本脚本。
         pause
         exit /b 1
     )
+    echo 安装完成，请关掉这个窗口重新双击本脚本（新装的 SDK 需要新环境）。
+    pause
+    exit /b 0
 ) else (
-    echo [1/3] .NET SDK 已就绪
+    echo [1/3] .NET SDK 已就绪：%SDKVER%
 )
 
 rem ---------- 2. 检查 Inno Setup ----------
@@ -53,6 +58,13 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+if not exist "publish\ClipPal.exe" (
+    echo.
+    echo 发布没有生成 publish\ClipPal.exe，请把上面的输出发我。
+    pause
+    exit /b 1
+)
+echo      发布完成：publish\ClipPal.exe
 
 "%ISCC%" "installer\ClipPal.iss"
 if errorlevel 1 (
