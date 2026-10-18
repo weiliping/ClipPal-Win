@@ -78,11 +78,14 @@ echo.
 echo ============================================
 echo   完成！安装包在 installer\Output\ 里
 echo ============================================
-if exist "installer\Output\ClipPal-Setup.exe" (
-    for %%F in ("installer\Output\ClipPal-Setup.exe") do echo   文件：%%~fF  (%%~zF 字节)
-    start "" "installer\Output"
-) else (
-    echo 没找到 ClipPal-Setup.exe，请把输出发我。
-)
+if exist "installer\Output\ClipPal-Setup.exe" goto :setup_ok
+echo 没找到 ClipPal-Setup.exe，请把上面的输出发我。
+goto :done
+
+:setup_ok
+for %%F in ("installer\Output\ClipPal-Setup.exe") do echo   文件：%%~fF  (%%~zF 字节)
+start "" "installer\Output"
+
+:done
 echo.
 pause
