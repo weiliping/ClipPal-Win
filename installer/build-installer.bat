@@ -11,6 +11,15 @@ echo.
 
 cd /d "%~dp0.."
 
+rem ---------- 0. 先尝试拉取最新代码（没装 git 就跳过） ----------
+where git >nul 2>nul
+if not errorlevel 1 (
+    echo [0/3] 正在拉取最新代码 ...
+    git pull --ff-only
+) else (
+    echo [0/3] 未安装 git，跳过更新，使用当前目录的代码
+)
+
 rem ---------- 1. 检查 .NET SDK ----------
 where dotnet >nul 2>nul
 if errorlevel 1 (
