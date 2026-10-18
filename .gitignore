@@ -17,3 +17,4 @@ publish-*/
 
 # macOS
 .DS_Store
+installer/*.zip
