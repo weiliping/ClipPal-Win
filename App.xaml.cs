@@ -1,4 +1,6 @@
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using ClipPal.Services;
@@ -23,6 +25,41 @@ public partial class App : Application
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern uint RegisterWindowMessage(string message);
+
+    public App()
+    {
+        // 兜底：任何未捕获的 UI 异常都写日志 + 弹框，而不是直接崩掉/只剩 JIT 对话框
+        DispatcherUnhandledException += (_, args) =>
+        {
+            var log = WriteCrashLog(args.Exception);
+            MessageBox.Show(
+                L10n.T($"ClipPal 遇到一个错误：\n\n{args.Exception.Message}\n\n日志已写入：\n{log}",
+                       $"ClipPal hit an error:\n\n{args.Exception.Message}\n\nLog written to:\n{log}"),
+                "ClipPal", MessageBoxButton.OK, MessageBoxImage.Error);
+            args.Handled = true;
+        };
+        AppDomain.CurrentDomain.UnhandledException += (_, args) => WriteCrashLog(args.ExceptionObject as Exception);
+        TaskScheduler.UnobservedTaskException += (_, args) => { WriteCrashLog(args.Exception); args.SetObserved(); };
+    }
+
+    /// <summary>把异常写到 %AppData%\ClipPal\crash.log，返回日志路径。</summary>
+    private static string WriteCrashLog(Exception? ex)
+    {
+        try
+        {
+            var dir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ClipPal");
+            Directory.CreateDirectory(dir);
+            var file = Path.Combine(dir, "crash.log");
+            File.AppendAllText(file,
+                $"==== {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===={Environment.NewLine}{ex}{Environment.NewLine}{Environment.NewLine}");
+            return file;
+        }
+        catch
+        {
+            return "(写日志失败)";
+        }
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {

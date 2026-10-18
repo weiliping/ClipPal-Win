@@ -20,7 +20,9 @@ public partial class SettingsWindow : Window
     private readonly Action _onLanguageChanged;
     private readonly DispatcherTimer _opacitySaveTimer;
 
-    private bool _loading;
+    // 初始为 true：InitializeComponent() 期间 XAML 里的 Slider Minimum/默认值会触发
+    // ValueChanged，此时 _settings 还没赋值，必须屏蔽（否则 NullReferenceException）
+    private bool _loading = true;
     private bool _recording;
 
     public SettingsWindow(AppSettings settings, ClipboardStore store, HotKeyManager hotKey, Action onLanguageChanged)
