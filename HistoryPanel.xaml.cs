@@ -15,6 +15,10 @@ public partial class HistoryPanel : Window
     private readonly ClipboardMonitor _monitor;
     private readonly AppSettings _settings;
     private readonly System.Windows.Threading.DispatcherTimer _hideTimer;
+    // 看门狗：面板显示期间每 200ms 检查一次"可见但没激活"，用于兜住
+    // Deactivated 事件不触发的情况（例如 Show() 时没有真正抢到激活状态）
+    private readonly System.Windows.Threading.DispatcherTimer _focusWatchdog;
+    private DateTime _shownAt;
     private bool _suppressAutoHide;      // 确认框等弹窗期间不要收起
     private ClipboardItem? _contextItem; // 右键作用的那一条
 
@@ -33,6 +37,19 @@ public partial class HistoryPanel : Window
         _hideTimer.Tick += (_, _) =>
         {
             _hideTimer.Stop();
+            if (!IsActive) Hide();
+        };
+
+        _focusWatchdog = new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(200),
+        };
+        _focusWatchdog.Tick += (_, _) =>
+        {
+            if (!IsVisible) { _focusWatchdog.Stop(); return; }
+            if (_suppressAutoHide) return;
+            // 刚显示的前 400ms 给足时间让它激活，避免被自己立刻关掉
+            if ((DateTime.UtcNow - _shownAt).TotalMilliseconds < 400) return;
             if (!IsActive) Hide();
         };
 
@@ -64,8 +81,11 @@ public partial class HistoryPanel : Window
         TrashButton.IsEnabled = _store.Items.Count > 0;
 
         PositionNearCursor();
+        _shownAt = DateTime.UtcNow;
+        _suppressAutoHide = false;   // 上一次次留下 true 的话会永久不自动收起，这里重置
         Show();
         Activate();
+        _focusWatchdog.Start();
         HistoryList.Focus();
     }
 
